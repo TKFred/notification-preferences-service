@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: notification_preferences_postgres
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_DB: notification_preferences
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

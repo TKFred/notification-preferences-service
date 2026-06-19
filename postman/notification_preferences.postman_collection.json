@@ -1,0 +1,179 @@
+{
+  "info": {
+    "name": "Notification Preferences Service",
+    "description": "Postman collection for local testing of Notification Preferences Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "userId",
+      "value": "user-1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Get preferences - new user defaults",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/users/new-user/preferences"
+      }
+    },
+    {
+      "name": "Update preferences + quiet hours",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/users/{{userId}}/preferences",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"preferences\": [\n    {\n      \"notificationType\": \"marketing\",\n      \"channel\": \"email\",\n      \"enabled\": true\n    },\n    {\n      \"notificationType\": \"transactional\",\n      \"channel\": \"push\",\n      \"enabled\": true\n    }\n  ],\n  \"quietHours\": {\n    \"enabled\": true,\n    \"start\": \"22:00\",\n    \"end\": \"08:00\",\n    \"timezone\": \"Asia/Almaty\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Get preferences - after update",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/users/{{userId}}/preferences"
+      }
+    },
+    {
+      "name": "Evaluate - allowed by default",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"new-user\",\n  \"notificationType\": \"transactional\",\n  \"channel\": \"email\",\n  \"region\": \"US\",\n  \"datetime\": \"2026-05-21T12:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Evaluate - allowed by user preference",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"notificationType\": \"marketing\",\n  \"channel\": \"email\",\n  \"region\": \"US\",\n  \"datetime\": \"2026-05-21T12:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Update quiet user",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/users/user-quiet/preferences",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quietHours\": {\n    \"enabled\": true,\n    \"start\": \"22:00\",\n    \"end\": \"08:00\",\n    \"timezone\": \"Asia/Almaty\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Evaluate - blocked by quiet hours",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user-quiet\",\n  \"notificationType\": \"marketing\",\n  \"channel\": \"push\",\n  \"region\": \"KZ\",\n  \"datetime\": \"2026-05-21T21:30:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Evaluate - transactional ignores quiet hours",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user-quiet\",\n  \"notificationType\": \"transactional\",\n  \"channel\": \"push\",\n  \"region\": \"KZ\",\n  \"datetime\": \"2026-05-21T21:30:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Evaluate - blocked by global policy",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"notificationType\": \"marketing\",\n  \"channel\": \"sms\",\n  \"region\": \"EU\",\n  \"datetime\": \"2026-05-21T12:00:00Z\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Validation error - invalid channel",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/evaluate",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"notificationType\": \"marketing\",\n  \"channel\": \"whatsapp\",\n  \"region\": \"EU\",\n  \"datetime\": \"2026-05-21T12:00:00Z\"\n}"
+        }
+      }
+    }
+  ]
+}
