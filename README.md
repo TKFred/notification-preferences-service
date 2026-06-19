@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Notification Preferences Service
 
 Сервис управления пользовательскими настройками уведомлений.
@@ -300,7 +299,4 @@ notification_preferences.postman_collection.json
 - добавить outbox events при изменении настроек;
 - расширить модель политик приоритетами и датами действия;
 - добавить отдельную тестовую БД или Testcontainers.
-=======
-# notification-preferences-service
-Test task for Data Heroes
->>>>>>> 1dc71076f57d5dff83bad0205bb52a41c893a4a9
+
